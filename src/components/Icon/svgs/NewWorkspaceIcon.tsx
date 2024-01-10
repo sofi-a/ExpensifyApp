@@ -1,0 +1,65 @@
+import React from 'react';
+import Svg, {Path} from 'react-native-svg';
+import useThemePreference from '@hooks/useThemePreference';
+
+type NewWorkspaceIconProps = {
+    /** The fill color for the icon. Can be hex, rgb, rgba, or valid react-native named color such as 'red' or 'blue'. */
+    fill?: string;
+
+    /** Is icon hovered */
+    hovered?: string;
+
+    /** Is icon pressed */
+    pressed?: string;
+
+    /** Icon's width */
+    width?: number;
+
+    /** Icon's height */
+    height?: number;
+};
+
+function NewWorkspaceIcon(props: NewWorkspaceIconProps) {
+    const themePreference = useThemePreference();
+    const isInteracting = props.hovered === "true" || props.pressed === "true";
+    const backgroundColor = (isInteracting && props.fill) || "#03d47c";
+    const buildingColor =
+        isInteracting && themePreference === "dark" ? "#000" : "#fff";
+
+    return (
+        <Svg
+            x="0"
+            y="0"
+            viewBox="0 0 40 40"
+            style={{enableBackground: 'new 0 0 40 40'}}
+            xmlSpace="preserve"
+            {...props}
+        >
+            {/* Background */}
+            <Path
+                d="M20,0L20,0c11,0,20,9,20,20l0,0c0,11-9,20-20,20l0,0C9,40,0,31,0,20l0,0C0,9,9,0,20,0z"
+                fill={backgroundColor}
+            />
+
+            {/* Building */}
+            <Path
+                d="M13,12.8c0-1,0.8-1.8,1.8-1.8h10.5c1,0,1.8,0.8,1.8,1.8v14.5c0,1-0.8,1.8-1.8,1.8H22v-3.2	c0-0.4-0.4-0.8-0.8-0.8h-2.4c-0.4,0-0.8,0.4-0.8,0.8V29h-3.2c-1,0-1.8-0.8-1.8-1.8V12.8z M16.9,13c-0.6,0-1,0.4-1,1s0.4,1,1,1h6.2	c0.6,0,1-0.4,1-1s-0.4-1-1-1H16.9z M15.9,18c0-0.6,0.4-1,1-1h6.2c0.6,0,1,0.4,1,1s-0.4,1-1,1h-6.2C16.3,19,15.9,18.6,15.9,18z M16.9,21c-0.6,0-1,0.4-1,1s0.4,1,1,1h6.2c0.6,0,1-0.4,1-1s-0.4-1-1-1H16.9z"
+                fillRule="evenodd"
+                clipRule="evenodd"
+                fill={buildingColor}
+            />
+
+            {/* Star */}
+            <Path
+                d="M28.8,5.8C28.8,5.7,28.7,5.7,28.8,5.8c-0.6-1-2-1-2.6,0l0,0l0,0l-0.9,1.7l-2.1,0.3l0,0l0,0	c-1.1,0.1-1.8,1.5-0.8,2.4l0,0l1.5,1.3l-0.3,1.8v0c-0.1,0.6,0.2,1.1,0.6,1.4c0.4,0.3,1,0.3,1.5,0.1c0,0,0,0,0,0l1.9-0.9l1.9,0.9	c0,0,0,0,0,0c0,0,0,0,0,0c0.5,0.2,1.1,0.2,1.5-0.1c0.4-0.3,0.7-0.8,0.6-1.4v0l-0.3-1.8l1.5-1.3l0,0c1-0.9,0.3-2.3-0.8-2.4l0,0	l-2.1-0.3L28.8,5.8z"
+                fill="#fed607"
+                stroke={backgroundColor}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </Svg>
+    );
+}
+
+export default NewWorkspaceIcon;

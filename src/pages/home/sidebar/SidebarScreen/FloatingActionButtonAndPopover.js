@@ -5,6 +5,7 @@ import {View} from 'react-native';
 import {withOnyx} from 'react-native-onyx';
 import FloatingActionButton from '@components/FloatingActionButton';
 import * as Expensicons from '@components/Icon/Expensicons';
+import NewWorkspaceIcon from '@components/Icon/svgs/NewWorkspaceIcon';
 import PopoverMenu from '@components/PopoverMenu';
 import withLocalize, {withLocalizePropTypes} from '@components/withLocalize';
 import withNavigation from '@components/withNavigation';
@@ -215,9 +216,8 @@ function FloatingActionButtonAndPopover(props) {
                     ...(!props.isLoading && !Policy.hasActiveFreePolicy(props.allPolicies)
                         ? [
                               {
-                                  displayInDefaultIconColor: true,
                                   contentFit: 'contain',
-                                  icon: Expensicons.NewWorkspace,
+                                  icon: NewWorkspaceIcon,
                                   iconWidth: 46,
                                   iconHeight: 40,
                                   text: props.translate('workspace.new.newWorkspace'),
