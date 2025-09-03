@@ -33,6 +33,7 @@
     status: "",
     sortBy: "date",
     sortOrder: "desc",
+    positions: {},
   };
 
   function applyDefaults(filters) {
@@ -43,15 +44,39 @@
   }
 
   function updateDefaultValues(field, value) {
-    if (field === "status" && value === "all") {
-      defaultValues[field] = "";
+    if (field.value === "status" && value === "all") {
+      defaultValues[field.value] = "";
       return;
     }
-    defaultValues[field] = value;
+    defaultValues[field.value] = value;
+    defaultValues["positions"][field.value] = field.position;
   }
 }
 
-query = _ filters:filterList? _ { return applyDefaults(filters); }
+query = _ filters:filterList? _ {
+  const ast = applyDefaults(filters);
+  const positions = { ...ast.positions };
+
+  function collectPositions(filter) {
+    if (!filter) {
+      return;
+    }
+    if (Array.isArray(filter)) {
+      filter.forEach(collectPositions);
+      return;
+    }
+    if (filter.left && filter.position) {
+      positions[filter.left] = filter.position;
+    }
+  }
+
+  collectPositions(ast.filters);
+  
+  return {
+    ...ast,
+    positions,
+  };
+}
 
 filterList
   = head:filter tail:(logicalAnd filter)* {
@@ -108,7 +133,10 @@ freeTextFilter
 standardFilter
   = _ field:filterKey _ op:filterOperator _  values:identifier {
       expectingNestedQuote = false; nameOperator = false;
-      return buildFilter(op, field, values);
+      return {
+        ...buildFilter(op, field.value, values),
+        position: field.position,
+      };
     }
 
 key "key"
@@ -152,10 +180,13 @@ key "key"
 filterKey
   = k:key {
       nameOperator = (k === "from" || k === "to");
-      return k;
+      return { value: k, position: location() };
 }
 
-defaultKey "default key" = @(type / status / sortBy / sortOrder / policyID / groupBy)
+defaultKey "default key"
+  = k:(type / status / sortBy / sortOrder / policyID / groupBy) {
+    return { value: k, position: location() };
+  }
 
 identifier
   = (","+)? parts:(values / quotedString / alphanumeric)|1.., ","+| empty:(","+)? {

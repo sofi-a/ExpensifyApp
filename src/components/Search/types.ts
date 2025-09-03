@@ -157,6 +157,19 @@ type SearchQueryAST = {
     policyID?: string[];
 };
 
+type Position = {
+    offset: number;
+    line: number;
+    column: number;
+};
+
+type Range = {
+    start: Position;
+    end: Position;
+};
+
+type Positions = Record<SearchFilterKey, Range>;
+
 type SearchQueryJSON = {
     inputQuery: SearchQueryString;
     hash: number;
@@ -165,6 +178,7 @@ type SearchQueryJSON = {
     /** Use similarSearchHash to test if two searchers are similar i.e. have same filters but not necessary same values */
     similarSearchHash: number;
     flatFilters: QueryFilters;
+    positions: Positions;
 } & SearchQueryAST;
 
 type SearchAutocompleteResult = {
@@ -219,4 +233,5 @@ export type {
     SearchDatePreset,
     SearchWithdrawalType,
     UserFriendlyValue,
+    Positions,
 };
