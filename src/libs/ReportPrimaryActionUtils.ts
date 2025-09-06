@@ -48,6 +48,7 @@ import {
     shouldShowBrokenConnectionViolationForMultipleTransactions,
     shouldShowBrokenConnectionViolation as shouldShowBrokenConnectionViolationTransactionUtils,
 } from './TransactionUtils';
+import isReviewDuplicatesRoute from './Navigation/helpers/isReviewDuplicatesRoute';
 
 type GetReportPrimaryActionParams = {
     report: Report;
@@ -373,12 +374,17 @@ function getTransactionThreadPrimaryAction(
     reportTransaction: Transaction,
     violations: TransactionViolation[],
     policy?: Policy,
+    backTo?: string,
 ): ValueOf<typeof CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS> | '' {
     if (isHoldCreator(reportTransaction, transactionThreadReport.reportID)) {
         return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.REMOVE_HOLD;
     }
 
     if (isReviewDuplicatesAction(parentReport, [reportTransaction])) {
+        if (isReviewDuplicatesRoute(backTo)) {
+            return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.RESOLVE_DUPLICATES;
+        }
+
         return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.REVIEW_DUPLICATES;
     }
 

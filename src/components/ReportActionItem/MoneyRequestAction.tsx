@@ -12,6 +12,7 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import {createTransactionThreadReport} from '@libs/actions/Report';
 import {isIOUReportPendingCurrencyConversion} from '@libs/IOUUtils';
+import isReviewDuplicatesRoute from '@libs/Navigation/helpers/isReviewDuplicatesRoute';
 import Navigation from '@libs/Navigation/Navigation';
 import type {PlatformStackRouteProp} from '@libs/Navigation/PlatformStackNavigation/types';
 import type {TransactionDuplicateNavigatorParamList} from '@libs/Navigation/types';
@@ -117,13 +118,23 @@ function MoneyRequestAction({
         // In case the childReportID is not present it probably means the transaction thread was not created yet,
         // so we need to send the parentReportActionID and the transactionID to the route so we can call OpenReport correctly
         const transactionID = isMoneyRequestAction(action) ? getOriginalMessage(action)?.IOUTransactionID : CONST.DEFAULT_NUMBER_ID;
+        const shouldOpenInRHP = isReviewDuplicatesRoute(Navigation.getActiveRoute());
         if (!action?.childReportID && transactionID && action.reportActionID) {
             const transactionThreadReport = createTransactionThreadReport(iouReport, action);
+            if (shouldOpenInRHP) {
+                Navigation.navigate(ROUTES.SEARCH_REPORT.getRoute({reportID: transactionThreadReport?.reportID, backTo: Navigation.getActiveRoute()}));
+                return;
+            }
             Navigation.navigate(ROUTES.REPORT_WITH_ID.getRoute(transactionThreadReport?.reportID, undefined, undefined, Navigation.getActiveRoute()));
             return;
         }
 
-        Navigation.navigate(ROUTES.REPORT_WITH_ID.getRoute(action?.childReportID, undefined, undefined, Navigation.getActiveRoute()));
+        if (shouldOpenInRHP) {
+            Navigation.navigate(ROUTES.SEARCH_REPORT.getRoute({reportID: action?.childReportID, backTo: Navigation.getActiveRoute()}));
+            return;
+        }
+
+        Navigation.navigate(ROUTES.REPORT_WITH_ID.getRoute(action?.childReportID, undefined, undefined, undefined, undefined, Navigation.getActiveRoute()));
     };
 
     let shouldShowPendingConversionMessage = false;
