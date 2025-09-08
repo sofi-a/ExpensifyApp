@@ -4,6 +4,7 @@ import type {ValueOf} from 'type-fest';
 import type {LocaleContextProps} from '@components/LocaleContextProvider';
 import type {
     ASTNode,
+    Positions,
     QueryFilter,
     QueryFilters,
     SearchAmountFilterKeys,
@@ -361,6 +362,35 @@ function getGroupByValue(groupBy?: SearchGroupBy | SearchGroupBy[]): SearchGroup
     return groupBy;
 }
 
+function getFiltersOrder(positions: Positions): string[] {
+    return Object.entries(positions)
+        .sort(([, a], [, b]) => a.start.offset - b.start.offset)
+        .map(([key]) => key);
+}
+
+function sortQueryPartsByFilterOrder(queryParts: string[], filtersOrder: string[]) {
+    return [...queryParts].sort((a, b) => {
+        const aKey = a.split(':').at(0) ?? '';
+        const bKey = b.split(':').at(0) ?? '';
+        const aIdx = filtersOrder.indexOf(aKey);
+        const bIdx = filtersOrder.indexOf(bKey);
+
+        // If both keys are found, sort by their order in inputQuery
+        if (aIdx !== -1 && bIdx !== -1) {
+            return aIdx - bIdx;
+        }
+        // If only one is found, that one comes first
+        if (aIdx !== -1) {
+            return -1;
+        }
+        if (bIdx !== -1) {
+            return 1;
+        }
+        // Otherwise, keep original order
+        return 0;
+    });
+}
+
 /**
  * Parses a given search query string into a structured `SearchQueryJSON` format.
  * This format of query is most commonly shared between components and also sent to backend to retrieve search results.
@@ -433,7 +463,8 @@ function buildSearchQueryString(queryJSON?: SearchQueryJSON) {
         queryParts.push(filterValueString.trim());
     }
 
-    return queryParts.join(' ');
+    const filtersOrder = getFiltersOrder(queryJSON.positions ?? {});
+    return sortQueryPartsByFilterOrder(queryParts, filtersOrder).join(' ');
 }
 
 /**
@@ -816,16 +847,18 @@ function buildUserReadableQueryString(
     const {type, status, groupBy, policyID} = queryJSON;
     const filters = queryJSON.flatFilters;
 
-    let title = status
-        ? `type:${getUserFriendlyValue(type)} status:${Array.isArray(status) ? status.map(getUserFriendlyValue).join(',') : getUserFriendlyValue(status)}`
-        : `type:${getUserFriendlyValue(type)}`;
+    const queryParts = [`type:${getUserFriendlyValue(type)}`];
+
+    if (status) {
+        queryParts.push(`status:${Array.isArray(status) ? status.map(getUserFriendlyValue).join(',') : getUserFriendlyValue(status)}`);
+    }
 
     if (groupBy) {
-        title += ` group-by:${getUserFriendlyValue(groupBy)}`;
+        queryParts.push(`group-by:${getUserFriendlyValue(groupBy)}`);
     }
 
     if (policyID && policyID.length > 0) {
-        title += ` workspace:${policyID.map((id) => sanitizeSearchValue(policies?.[`${ONYXKEYS.COLLECTION.POLICY}${id}`]?.name ?? id)).join(',')}`;
+        queryParts.push(`workspace:${policyID.map((id) => sanitizeSearchValue(policies?.[`${ONYXKEYS.COLLECTION.POLICY}${id}`]?.name ?? id)).join(',')}`);
     }
 
     for (const filterObject of filters) {
@@ -889,10 +922,14 @@ function buildUserReadableQueryString(
                 value: getFilterDisplayValue(key, getUserFriendlyValue(filter.value.toString()), PersonalDetails, reports, cardList, cardFeeds, policies),
             }));
         }
-        title += buildFilterValuesString(getUserFriendlyKey(key), displayQueryFilters);
+        queryParts.push(buildFilterValuesString(getUserFriendlyKey(key), displayQueryFilters).trim());
     }
 
-    return title;
+    const filtersOrder = getFiltersOrder(queryJSON.positions ?? {});
+    return sortQueryPartsByFilterOrder(
+        queryParts,
+        filtersOrder.map((filter) => getUserFriendlyKey(filter as SearchFilterKey)),
+    ).join(' ');
 }
 
 /**
