@@ -117,9 +117,19 @@ function MoneyRequestAction({
         // In case the childReportID is not present it probably means the transaction thread was not created yet,
         // so we need to send the parentReportActionID and the transactionID to the route so we can call OpenReport correctly
         const transactionID = isMoneyRequestAction(action) ? getOriginalMessage(action)?.IOUTransactionID : CONST.DEFAULT_NUMBER_ID;
+        const shouldOpenInRHP = route?.name === SCREENS.TRANSACTION_DUPLICATE.REVIEW;
         if (!action?.childReportID && transactionID && action.reportActionID) {
             const transactionThreadReport = createTransactionThreadReport(iouReport, action);
+            if (shouldOpenInRHP) {
+                Navigation.navigate(ROUTES.SEARCH_REPORT.getRoute({reportID: transactionThreadReport?.reportID, backTo: Navigation.getActiveRoute()}));
+                return;
+            }
             Navigation.navigate(ROUTES.REPORT_WITH_ID.getRoute(transactionThreadReport?.reportID, undefined, undefined, Navigation.getActiveRoute()));
+            return;
+        }
+
+        if (shouldOpenInRHP) {
+            Navigation.navigate(ROUTES.SEARCH_REPORT.getRoute({reportID: action?.childReportID, backTo: Navigation.getActiveRoute()}));
             return;
         }
 

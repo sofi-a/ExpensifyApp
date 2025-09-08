@@ -4,6 +4,7 @@ import CONST from '@src/CONST';
 import type {Policy, Report, ReportAction, ReportNameValuePairs, Transaction, TransactionViolation} from '@src/types/onyx';
 import {isApprover as isApproverUtils} from './actions/Policy/Member';
 import {getCurrentUserAccountID} from './actions/Report';
+import isReviewDuplicatesRoute from './Navigation/helpers/isReviewDuplicatesRoute';
 import {
     arePaymentsEnabled as arePaymentsEnabledUtils,
     getCorrectedAutoReportingFrequency,
@@ -373,12 +374,17 @@ function getTransactionThreadPrimaryAction(
     reportTransaction: Transaction,
     violations: TransactionViolation[],
     policy?: Policy,
+    backTo?: string,
 ): ValueOf<typeof CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS> | '' {
     if (isHoldCreator(reportTransaction, transactionThreadReport.reportID)) {
         return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.REMOVE_HOLD;
     }
 
     if (isReviewDuplicatesAction(parentReport, [reportTransaction])) {
+        if (isReviewDuplicatesRoute(backTo)) {
+            return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.RESOLVE_DUPLICATES;
+        }
+
         return CONST.REPORT.TRANSACTION_PRIMARY_ACTIONS.REVIEW_DUPLICATES;
     }
 
