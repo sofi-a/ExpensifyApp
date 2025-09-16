@@ -76,7 +76,7 @@ function CardListItemHeader<TItem extends ListItem>({
                         <View style={[styles.gapHalf, styles.flexShrink1]}>
                             <TextWithTooltip
                                 text={formattedDisplayName}
-                                style={[styles.optionDisplayName, styles.sidebarLinkTextBold, styles.pre]}
+                                style={[styles.optionDisplayName, styles.headerTextNormal, styles.pre]}
                             />
                             <TextWithTooltip
                                 text={`${cardItem.cardName}${cardItem.lastFourPAN ? ` ${CONST.DOT_SEPARATOR} ` : ''}${cardItem.lastFourPAN}`}
