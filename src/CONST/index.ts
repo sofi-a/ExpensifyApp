@@ -5316,6 +5316,7 @@ const CONST = {
         LARGE: 'large',
         MEDIUM: 'medium',
         SMALL: 'small',
+        EXTRA_SMALL: 'extraSmall',
     },
 
     SF_COORDINATES: [-122.4194, 37.7749],

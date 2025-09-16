@@ -722,6 +722,14 @@ const styles = (theme: ThemeColors) =>
             minHeight: 64,
         },
 
+        buttonExtraSmall: {
+            borderRadius: variables.buttonBorderRadius,
+            minHeight: variables.componentSizeExtraSmall,
+            minWidth: variables.componentSizeExtraSmall,
+            paddingHorizontal: 8,
+            backgroundColor: theme.buttonDefaultBG,
+        },
+
         buttonSmall: {
             borderRadius: variables.buttonBorderRadius,
             minHeight: variables.componentSizeSmall,
@@ -744,6 +752,12 @@ const styles = (theme: ThemeColors) =>
             minWidth: variables.componentSizeLarge,
             paddingHorizontal: 20,
             backgroundColor: theme.buttonDefaultBG,
+        },
+
+        buttonExtraSmallText: {
+            fontSize: variables.fontSizeExtraSmall,
+            ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+            textAlign: 'center',
         },
 
         buttonSmallText: {

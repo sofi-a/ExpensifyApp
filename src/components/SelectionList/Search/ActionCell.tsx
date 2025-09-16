@@ -20,6 +20,7 @@ import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import type {SearchTransactionAction} from '@src/types/onyx/SearchResults';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 const actionTranslationsMap: Record<SearchTransactionAction, TranslationPaths> = {
     view: 'common.view',
@@ -64,6 +65,7 @@ function ActionCell({
     const styles = useThemeStyles();
     const StyleUtils = useStyleUtils();
     const {isOffline} = useNetwork();
+    const {shouldUseNarrowLayout} = useResponsiveLayout();
 
     const [iouReport] = useOnyx(`${ONYXKEYS.COLLECTION.REPORT}${reportID}`, {canBeMissing: true});
     const text = isChildListItem ? translate(actionTranslationsMap[CONST.SEARCH.ACTION_TYPES.VIEW]) : translate(actionTranslationsMap[action]);
@@ -112,7 +114,6 @@ function ActionCell({
             <Button
                 text={text}
                 onPress={goToItem}
-                small
                 style={[styles.w100]}
                 innerStyles={buttonInnerStyles}
                 link={isChildListItem}
@@ -121,6 +122,8 @@ function ActionCell({
                 iconFill={theme.danger}
                 iconHoverFill={theme.dangerHover}
                 isNested
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...(shouldUseNarrowLayout ? {extraSmall: true} : {small: true})}
             />
         ) : null;
     }
@@ -129,7 +132,7 @@ function ActionCell({
         return (
             <SettlementButton
                 shouldUseShortForm
-                buttonSize={CONST.DROPDOWN_BUTTON_SIZE.SMALL}
+                buttonSize={shouldUseNarrowLayout ? CONST.DROPDOWN_BUTTON_SIZE.EXTRA_SMALL : CONST.DROPDOWN_BUTTON_SIZE.SMALL}
                 currency={currency}
                 formattedAmount={convertToDisplayString(iouReport?.total, currency)}
                 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
@@ -157,6 +160,8 @@ function ActionCell({
             success
             isDisabled={isOffline}
             isNested
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...(shouldUseNarrowLayout ? {extraSmall: true} : {small: true})}
         />
     );
 }
