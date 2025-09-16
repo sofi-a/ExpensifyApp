@@ -193,6 +193,11 @@ function ReportListItemHeader<TItem extends ListItem>({
     };
     return !isLargeScreenWidth ? (
         <View>
+            <UserInfoAndActionButtonRow
+                item={reportItem}
+                handleActionButtonPress={handleOnButtonPress}
+                shouldShowUserInfo={showUserInfo}
+            />
             <HeaderFirstRow
                 report={reportItem}
                 onCheckboxPress={onCheckboxPress}
@@ -201,11 +206,6 @@ function ReportListItemHeader<TItem extends ListItem>({
                 avatarBorderColor={avatarBorderColor}
                 isSelectAllChecked={isSelectAllChecked}
                 isIndeterminate={isIndeterminate}
-            />
-            <UserInfoAndActionButtonRow
-                item={reportItem}
-                handleActionButtonPress={handleOnButtonPress}
-                shouldShowUserInfo={showUserInfo}
             />
         </View>
     ) : (
