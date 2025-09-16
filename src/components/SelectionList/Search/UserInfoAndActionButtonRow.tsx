@@ -35,7 +35,7 @@ function UserInfoAndActionButtonRow({
                     participantFromDisplayName={participantFromDisplayName}
                     participantToDisplayName={participantToDisplayName}
                     participantTo={item?.to}
-                    avatarSize={CONST.AVATAR_SIZE.MID_SUBSCRIPT}
+                    avatarSize={CONST.AVATAR_SIZE.SMALL_SUBSCRIPT}
                     style={[styles.flexRow, styles.alignItemsCenter, styles.gap2]}
                     infoCellsTextStyle={{...styles.textMicroBold, lineHeight: 14}}
                     infoCellsAvatarStyle={styles.pr1}
