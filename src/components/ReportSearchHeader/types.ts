@@ -15,6 +15,9 @@ type ReportSearchHeaderProps = {
 
     /** Color of the secondary avatar border, usually should match the container background */
     avatarBorderColor?: ColorValue;
+
+    /** Whether the title text should be bold */
+    shouldUseBoldText?: boolean;
 };
 
 export default ReportSearchHeaderProps;

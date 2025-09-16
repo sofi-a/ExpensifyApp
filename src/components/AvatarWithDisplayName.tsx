@@ -70,6 +70,9 @@ type AvatarWithDisplayNameProps = {
 
     /** Color of the secondary avatar border, usually should match the container background */
     avatarBorderColor?: ColorValue;
+
+    /** Whether the display name text should be bold */
+    shouldUseBoldText?: boolean;
 };
 
 function getCustomDisplayName(
@@ -159,6 +162,7 @@ function AvatarWithDisplayName({
     openParentReportInCurrentTab = false,
     avatarBorderColor: avatarBorderColorProp,
     shouldDisplayStatus = false,
+    shouldUseBoldText = true,
 }: AvatarWithDisplayNameProps) {
     const {localeCompare} = useLocalize();
     const [parentReportActions] = useOnyx(`${ONYXKEYS.COLLECTION.REPORT_ACTIONS}${report?.parentReportID}`, {canEvict: false, canBeMissing: false});
@@ -266,7 +270,7 @@ function AvatarWithDisplayName({
                             displayNamesWithTooltips,
                             transactions,
                             shouldUseFullTitle,
-                            [styles.headerText, styles.pre],
+                            [shouldUseBoldText ? styles.headerText : styles.headerTextNormal, styles.pre],
                             [isAnonymous ? styles.headerAnonymousFooter : styles.headerText, styles.pre],
                             isAnonymous,
                             isMoneyRequestOrReport,

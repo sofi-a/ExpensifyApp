@@ -124,6 +124,7 @@ function HeaderFirstRow<TItem extends ListItem>({
                         style={[{maxWidth: 700}]}
                         transactions={reportItem.transactions}
                         avatarBorderColor={avatarBorderColor}
+                        shouldUseBoldText={false}
                     />
                 </View>
             </View>

@@ -1163,6 +1163,12 @@ const styles = (theme: ThemeColors) =>
             fontSize: variables.fontSizeNormal,
         },
 
+        headerTextNormal: {
+            color: theme.heading,
+            ...FontUtils.fontFamily.platform.EXP_NEUE,
+            fontSize: variables.fontSizeNormal,
+        },
+
         headerGap: {
             height: CONST.DESKTOP_HEADER_PADDING,
         },
